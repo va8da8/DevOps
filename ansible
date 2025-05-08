@@ -1,0 +1,10 @@
+host Address = 1.1.1.1  -  это главный сервер с которого будет происходить управление 
+всеми серверами(физическими и виртуальными).
+
+sudo apt update
+
+sudo apt upgrade -y
+
+sudo apt install -y ansible
+
+ansible --version
