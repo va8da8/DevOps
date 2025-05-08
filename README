@@ -17,3 +17,11 @@ ansible [core 2.14.18]
   python version = 3.11.2 (main, Nov 30 2024, 21:22:50) [GCC 12.2.0] (/usr/bin/python3)
   jinja version = 3.1.2
   libyaml = True
+
+sudo apt install sshpass
+
+mkdir -p /etc/ansible/inventory
+
+touch /etc/ansible/ansible.cfg
+
+touch /etc/ansible/inventory/hosts
