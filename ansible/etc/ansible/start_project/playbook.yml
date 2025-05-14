@@ -1,27 +1,38 @@
+---
 - name: Генерация SSH-ключа на контроллере
   hosts: localhost
   connection: local
   gather_facts: no
+
   tasks:
-    - name: Проверить, существует ли ключ
+    - name: Проверить, существует ли SSH-ключ
       stat:
         path: /etc/ansible/start_project/files/ansible_id_rsa
       register: keypair
 
-    - name: Сгенерировать ключ, если его нет
+    - name: Сгенерировать SSH-ключ, если не существует
       command: ssh-keygen -t rsa -b 4096 -f /etc/ansible/start_project/files/ansible_id_rsa -N ""
       when: not keypair.stat.exists
 
-
-- name: Подготовка удаленного сервера
+- name: Подготовка удалённого сервера
   hosts: all
   become: yes
   gather_facts: no
 
+  vars_prompt:
+    - name: ansible_user_password
+      prompt: "Введите пароль для пользователя ansible"
+      private: yes
+
   pre_tasks:
-    - name: Установить Python (если не установлен)
+    - name: Установить Python, если отсутствует
       raw: test -e /usr/bin/python3 || (apt update && apt install -y python3)
       changed_when: false
+
+    - name: Установить sudo, если отсутствует
+      ansible.builtin.package:
+        name: sudo
+        state: present
 
   tasks:
     - name: Создать пользователя ansible
@@ -29,29 +40,22 @@
         name: ansible
         shell: /bin/bash
         create_home: yes
-        password: "{{ '12345' | password_hash('sha512') }}"  # Устанавливаем пароль для пользователя ansible
+        password: "{{ ansible_user_password | password_hash('sha512') }}"
 
-    - name: Скопировать публичный ключ
+    - name: Скопировать публичный SSH-ключ пользователю ansible
       ansible.builtin.authorized_key:
         user: ansible
         state: present
         key: "{{ lookup('file', '/etc/ansible/start_project/files/ansible_id_rsa.pub') }}"
 
-    - name: Создать директорию /etc/sudoers.d (если отсутствует)
+    - name: Создать директорию /etc/sudoers.d, если отсутствует
       ansible.builtin.file:
         path: /etc/sudoers.d
         state: directory
         mode: '0750'
 
-    - name: Добавить sudo без пароля
+    - name: Разрешить ansible использовать sudo без пароля
       ansible.builtin.copy:
         dest: /etc/sudoers.d/ansible
         content: "ansible ALL=(ALL) NOPASSWD:ALL\n"
         mode: '0440'
-
-    - name: Убедиться, что sudo установлен
-      ansible.builtin.package:
-        name: sudo
-        state: present
-
-
