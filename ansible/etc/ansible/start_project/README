@@ -1,0 +1,17 @@
+# первый запуск для работы с удаленными хостами
+ansible-playbook -i inventory/hosts playbook.yml --ask-pass --user root
+# т.к. доступ к серверу на начальном этапе я оставил по root с паролем
+# и прописал это в файле ansible.cfg
+# При первом запуске root, потом меняем на ansible
+remote_user = root
+
+
+  tasks:
+    - name: Создать пользователя ansible
+      ansible.builtin.user:
+        name: ansible
+        shell: /bin/bash
+        create_home: yes
+        password: "{{ '12345' | password_hash('sha512') }}"  # Устанавливаем пароль для пользователя ansible
+
+# это я сделал что бы реализовать выключение сервера через UI и для возможности управлять sudo через web
