@@ -1,0 +1,45 @@
+sudo apt update
+
+sudo apt install ethtool
+
+# смотрим имя интерфейса
+ip link
+
+# проверяем возможности WoL для интерфейса
+sudo ethtool enp3s0
+==========================================
+Supports Wake-on: pumbg
+Wake-on: d
+==========================================
+# значение g означает "включение по магическому пакету"
+# у меня было d
+
+# меняем значение
+sudo ethtool -s enp3s0 wol g
+
+# создаем настрйки
+sudo nano /etc/systemd/system/wol@.service
+==========================================
+[Unit]
+Description=Enable Wake-on-LAN for %i
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ethtool -s %i wol g
+
+[Install]
+WantedBy=multi-user.target
+
+# активируем 
+sudo systemctl enable wol@enp3s0.service
+==========================================
+
+# удаленное включение
+wakeonlan <MAC-адрес>
+
+
+
+
+
+
