@@ -1,3 +1,6 @@
+[local]
+localhost ansible_connection=local
+
 [physical_servers]
 1.1.1.2
 1.1.1.3
