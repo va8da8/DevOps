@@ -30,10 +30,10 @@ ExecStart=/sbin/ethtool -s %i wol g
 
 [Install]
 WantedBy=multi-user.target
+==========================================
 
 # активируем 
 sudo systemctl enable wol@enp3s0.service
-==========================================
 
 # удаленное включение
 wakeonlan <MAC-адрес>
