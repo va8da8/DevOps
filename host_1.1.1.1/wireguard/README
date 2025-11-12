@@ -1,1 +1,11 @@
+sudo apt install wireguard
+cd /etc/wireguard
+sudo wg genkey | tee privatekey | wg pubkey > publickey
+nano wg.conf
+=======================================================
 
+=======================================================
+sudo systemctl start wg-quick@wg
+sudo systemctl status wg-quick@wg
+sudo systemctl enable wg-quick@wg
+sudo systemctl status wg-quick@wg
