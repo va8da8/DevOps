@@ -1,1 +1,7 @@
 sudo adduser ansible
+sudo visudo
+================================
+ansible ALL=(ALL) NOPASSWD: ALL
+================================
+su ansible
+sudo apt install ansible
