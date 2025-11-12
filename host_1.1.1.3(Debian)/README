@@ -1,1 +1,11 @@
+на данном сервере установлена debian 12
+данный сервер (старый ноутбук)
 
+т.к. он должен работать с закрытой крышкой нужно отключить реагированние на закрытие крышки
+
+sudo nano /etc/systemd/logind.conf
+==================================
+HandleLidSwitch=ignore
+HandleLidSwitchDocked=ignore
+==================================
+sudo systemctl restart systemd-logind
